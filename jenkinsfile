@@ -39,13 +39,18 @@ pipeline {
         stage('Deploy Backend to Tomcat') {
             steps {
                 bat '''
+                echo "=== Listing WAR files inside Movie\\target ==="
+                dir Movie\\target
+
                 if exist "C:\\Program Files\\Apache Software Foundation\\Tomcat 10.1\\webapps\\movieapi.war" (
                     del /Q "C:\\Program Files\\Apache Software Foundation\\Tomcat 10.1\\webapps\\movieapi.war"
                 )
                 if exist "C:\\Program Files\\Apache Software Foundation\\Tomcat 10.1\\webapps\\movieapi" (
                     rmdir /S /Q "C:\\Program Files\\Apache Software Foundation\\Tomcat 10.1\\webapps\\movieapi"
                 )
-                copy "Movie\\target\\*.war" "C:\\Program Files\\Apache Software Foundation\\Tomcat 10.1\\webapps\\movieapi.war"
+
+                echo "=== Copying WAR file to Tomcat webapps ==="
+                copy Movie\\target\\*.war "C:\\Program Files\\Apache Software Foundation\\Tomcat 10.1\\webapps\\movieapi.war"
                 '''
             }
         }
@@ -54,10 +59,10 @@ pipeline {
 
     post {
         success {
-            echo 'Deployment Successful!'
+            echo '✅ Deployment Successful!'
         }
         failure {
-            echo 'Pipeline Failed.'
+            echo '❌ Pipeline Failed. Check logs above.'
         }
     }
 }
